@@ -4,8 +4,12 @@ pipeline {
     stages {
         stage('Install dependencies') {
             steps {
-                // ensure we have node modules
-                sh 'npm ci || npm install'
+                sh '''
+                    npm ci || npm install
+                    if ! command -v Xvfb >/dev/null 2>&1; then
+                        apt-get update && apt-get install -y xvfb
+                    fi
+                '''
             }
         }
 
@@ -13,9 +17,8 @@ pipeline {
 
         stage('Run Cypress tests') {
             steps {
-                // execute the headless run and tell the plugin where to put results
                 sh '''
-                    npx cypress run --env allure=true,allureResultsPath=cypress/results
+                    xvfb-run -a npx cypress run --env allure=true,allureResultsPath=cypress/results
                 '''
             }
         }
