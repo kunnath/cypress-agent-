@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  cypress:
+    build: .
+    volumes:
+      - ./:/e2e
+      - ./cypress/results:/e2e/cypress/results
+      - ./cypress/report:/e2e/cypress/report
+    environment:
+      - CYPRESS_ENV=ci
+    entrypoint: ["sh", "-c"]
+    command: "npm run test"
