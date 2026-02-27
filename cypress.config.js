@@ -30,7 +30,7 @@ module.exports = defineConfig({
       allureWriter(on, config);
       return config;
     },
-    baseUrl: "https://example.cypress.io",
+    baseUrl: "http://localhost:3000",
     specPattern: "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
   },
   experimentalStudio: true,
