@@ -4,7 +4,7 @@
   "description": "A Cypress test project with Allure reporting",
   "scripts": {
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run --env allure=true,allureResultsPath=cypress/results",
+    "cypress:run": "$(command -v xvfb-run >/dev/null 2>&1 && echo 'xvfb-run -a' || echo '') cypress run --env allure=true,allureResultsPath=cypress/results",
     "allure:generate": "allure generate cypress/results --clean -o cypress/report",
     "allure:open": "allure open cypress/report",
     "test": "npm run cypress:run && npm run allure:generate && npm run allure:open"
