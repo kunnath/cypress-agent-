@@ -75,11 +75,6 @@ describe('template spec', () => {
     cy.get('.grid > :nth-child(2) > .w-full').clear('34');
     cy.wait(200);
     cy.get('.grid > :nth-child(2) > .w-full').type('345');
-    cy.wait(500);
-    cy.get('.space-y-6 > :nth-child(2) > .text-xs').click();
-    cy.wait(500);
-    cy.get('.md\\:w-auto').click();
-    cy.wait(1000);
-    /* ==== End Cypress Studio ==== */
+      /* ==== End Cypress Studio ==== */
   });
 })
