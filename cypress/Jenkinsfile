@@ -13,12 +13,13 @@ pipeline {
             }
         }
 
-        // no Python/Playwright stages needed for Cypress
+        // no Python/Playwright stages needed for Cypress       xvfb-run -a npx cypress run --env allure=true,allureResultsPath=cypress/results
 
         stage('Run Cypress tests') {
             steps {
                 sh '''
-                    xvfb-run -a npx cypress run --env allure=true,allureResultsPath=cypress/results
+
+                     xvfb-run -a npx cypress run --record --key 75c95202-b753-415a-82eb-9d67e942795a --env allure=true,allureResultsPath=cypress/results
                 '''
             }
         }
