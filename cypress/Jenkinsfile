@@ -10,14 +10,7 @@ pipeline {
 
         stage('Run Cypress tests') {
             steps {
-                script {
-                    try {
-                        sh 'xvfb-run -a npx cypress run --record --key 75c95202-b753-415a-82eb-9d67e942795a --env allure=true,allureResultsPath=cypress/results'
-                    } catch (Exception e) {
-                        // If xvfb-run fails, try without it
-                        sh 'npx cypress run --record --key 75c95202-b753-415a-82eb-9d67e942795a --env allure=true,allureResultsPath=cypress/results'
-                    }
-                }
+                sh 'npx cypress run --browser electron --record --key 75c95202-b753-415a-82eb-9d67e942795a --env allure=true,allureResultsPath=cypress/results'
             }
         }
 
