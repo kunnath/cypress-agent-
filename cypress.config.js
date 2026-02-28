@@ -31,6 +31,16 @@ module.exports = defineConfig({
       return config;
     },
     baseUrl: "http://localhost:3000",
+    // baseUrl: 'https://www.airbtent.com',
+    // note: use `e2e` folder/spec pattern below instead of legacy `integration` path
+    viewportWidth: 1280,
+    viewportHeight: 720,
+    video: false,
+    screenshotOnRunFailure: true,
+    defaultCommandTimeout: 10000,
+    supportFile: 'cypress/support/e2e.js',
+    // additional node event listeners can be implemented here
+    // (existing writer setup above handles allure events)
     specPattern: "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
   },
   experimentalStudio: true,
