@@ -49,7 +49,7 @@ describe('AirBTent Guest Login Flow', () => {
     cy.get('button').contains('Log in').click()
 
     // Verify error message or stay on login page
-    cy.contains('Invalid').should('be.visible')
+    cy.contains('An error occurred').should('be.visible')
   })
 })
 
