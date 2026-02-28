@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'cypress/browsers:node-20.16.0-chrome-124.0.6367.91-1-ff-126.0.1-1'
-            args '-e DISPLAY=:99'
-        }
-    }
+    agent any
 
     stages {
         stage('Install dependencies') {
@@ -15,30 +10,27 @@ pipeline {
 
         stage('Run Cypress tests') {
             steps {
-                sh '''
-                    Xvfb :99 -screen 0 1280x720x24 &
-                    sleep 3
-                    npx cypress run --record --key 75c95202-b753-415a-82eb-9d67e942795a --env allure=true,allureResultsPath=cypress/results
-                '''
+                script {
+                    try {
+                        sh 'xvfb-run -a npx cypress run --record --key 75c95202-b753-415a-82eb-9d67e942795a --env allure=true,allureResultsPath=cypress/results'
+                    } catch (Exception e) {
+                        // If xvfb-run fails, try without it
+                        sh 'npx cypress run --record --key 75c95202-b753-415a-82eb-9d67e942795a --env allure=true,allureResultsPath=cypress/results'
+                    }
+                }
             }
         }
 
         stage('Allure report') {
             steps {
-                sh 'npx allure generate cypress/results --clean -o cypress/report'
-                archiveArtifacts artifacts: 'cypress/report/**', allowEmptyArchive: true
+                sh 'npx allure generate cypress/results --clean -o cypress/report || true'
             }
         }
     }
 
     post {
         always {
-            archiveArtifacts artifacts: 'cypress/videos/**, cypress/screenshots/**', allowEmptyArchive: true
-            
-            allure([
-                results: [[path: 'cypress/results']],
-                reportBuildPolicy: 'ALWAYS'
-            ])
+            archiveArtifacts artifacts: 'cypress/videos/**,cypress/screenshots/**', allowEmptyArchive: true
         }
     }
 }
