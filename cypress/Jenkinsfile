@@ -4,26 +4,48 @@ pipeline {
     stages {
         stage('Install dependencies') {
             steps {
-                sh 'npm ci || npm install'
+                sh '''
+                    npm ci || npm install
+                    if ! command -v Xvfb >/dev/null 2>&1; then
+                        apt-get update && apt-get install -y xvfb
+                    fi
+                '''
             }
         }
 
+        // no Python/Playwright stages needed for Cypress       xvfb-run -a npx cypress run --env allure=true,allureResultsPath=cypress/results
+
         stage('Run Cypress tests') {
             steps {
-                sh 'npx cypress run --browser electron --record --key 75c95202-b753-415a-82eb-9d67e942795a --env allure=true,allureResultsPath=cypress/results'
+                sh '''
+
+                     xvfb-run -a npx cypress run --record --key 75c95202-b753-415a-82eb-9d67e942795a --env allure=true,allureResultsPath=cypress/results
+                '''
             }
         }
 
         stage('Allure report') {
             steps {
-                sh 'npx allure generate cypress/results --clean -o cypress/report || true'
+                // generate the report from the folder Cypress has just populated
+                sh '''
+                    npx allure generate cypress/results --clean -o cypress/report
+                '''
+                // keep the generated HTML as a Jenkins artifact
+                archiveArtifacts artifacts: 'cypress/report/**', allowEmptyArchive: true
             }
         }
     }
 
     post {
         always {
-            archiveArtifacts artifacts: 'cypress/videos/**,cypress/screenshots/**', allowEmptyArchive: true
+            // archive whatever else you want (screenshots, videos, etc.)
+            archiveArtifacts artifacts: 'cypress/videos/**, cypress/screenshots/**', allowEmptyArchive: true
+
+            // publish the Allure results for the Jenkins Allure plugin
+            allure([
+                results: [[path: 'cypress/results']],   // relative to workspace
+                reportBuildPolicy: 'ALWAYS'             // optional
+            ])
         }
     }
 }
