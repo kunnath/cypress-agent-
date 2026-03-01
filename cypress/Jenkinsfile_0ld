@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Install dependencies') {
+            steps {
+                sh 'npm ci || npm install'
+            }
+        }
+
+        stage('Run Cypress tests') {
+            steps {
+                sh 'npx cypress run --browser electron --record --key 75c95202-b753-415a-82eb-9d67e942795a --env allure=true,allureResultsPath=cypress/results'
+            }
+        }
+
+        stage('Allure report') {
+            steps {
+                sh 'npx allure generate cypress/results --clean -o cypress/report || true'
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'cypress/videos/**,cypress/screenshots/**', allowEmptyArchive: true
+        }
+    }
+}

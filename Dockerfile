@@ -1,16 +1,28 @@
-FROM cypress/base:12
+FROM node:18
 
-# create working directory
 WORKDIR /e2e
 
-# copy package files first for caching
+# Install Cypress dependencies
+RUN apt-get update && apt-get install -y \
+    xvfb \
+    libgtk-3-0 \
+    libgbm1 \
+    libnotify-dev \
+    libnss3 \
+    libxss1 \
+    libasound2 \
+    libxtst6 \
+    xauth \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy package files
 COPY package.json package-lock.json* ./
 
-# install dependencies
-RUN npm ci
+# Install dependencies
+RUN npm install
 
-# copy rest of project
+# Copy rest of project
 COPY . .
 
-# default command to run tests and generate report
+# Default command
 CMD ["sh", "-c", "npm run test"]
